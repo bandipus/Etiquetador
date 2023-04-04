@@ -1,5 +1,5 @@
-__authors__ = 'TO_BE_FILLED'
-__group__ = 'TO_BE_FILLED'
+__authors__ = '1636012'
+__group__ = 'DM.18'
 
 import numpy as np
 import utils
@@ -30,11 +30,13 @@ class KMeans:
                     if matrix has more than 2 dimensions, the dimensionality of the sample space is the length of
                     the last dimension
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        self.X = np.random.rand(100, 5)
+        
+        X = X.astype(float)
+        
+        if X.ndim > 2:
+            X = X.reshape(-1, 3)
+
+        self.X = X
 
     def _init_options(self, options=None):
         """
@@ -62,22 +64,19 @@ class KMeans:
         ##  THIS FUNCTION CAN BE MODIFIED FROM THIS POINT, if needed
         #############################################################
 
-
 def _init_centroids(self):
     """
     Initialization of centroids
     """
 
-    #######################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #######################################################
-    if self.options['km_init'].lower() == 'first':
-        self.centroids = np.random.rand(self.K, self.X.shape[1])
-        self.old_centroids = np.random.rand(self.K, self.X.shape[1])
+    centroids = np.zeros((self.K, self.X.shape[1]))
+    old_centroids = np.zeros((self.K, self.X.shape[1]))
+
+    if self.options["km_init"] == "first":
+        
+    elif self.options["km_init"] == "random":
+
     else:
-        self.centroids = np.random.rand(self.K, self.X.shape[1])
-        self.old_centroids = np.random.rand(self.K, self.X.shape[1])
 
 
 def get_labels(self):
