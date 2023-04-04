@@ -14,7 +14,7 @@ class KMeans:
                  K (int): Number of cluster
                  options (dict): dictionary with options
             """
-        self.num_iter = 0
+        self.num_iter = 0dddd
         self.K = K
         self._init_X(X)
         self._init_options(options)  # DICT options
