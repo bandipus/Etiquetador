@@ -73,7 +73,7 @@ def _init_centroids(self):
     old_centroids = np.zeros((self.K, self.X.shape[1]))
 
     if self.options["km_init"] == "first":
-        
+        # Test
     elif self.options["km_init"] == "random":
 
     else:
