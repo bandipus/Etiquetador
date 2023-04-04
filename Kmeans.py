@@ -73,11 +73,11 @@ def _init_centroids(self):
     old_centroids = np.zeros((self.K, self.X.shape[1]))
 
     if self.options["km_init"] == "first":
-        # Test
+        centroids = 0
     elif self.options["km_init"] == "random":
-
+        cetroids = 0
     else:
-
+        centroids = 0
 
 def get_labels(self):
     """        Calculates the closest centroid of all points in X
