@@ -1,4 +1,4 @@
-__authors__ = '1636012'
+__authors__ = '1636012, 1637892, 1633445'
 __group__ = 'DM.18'
 
 import numpy as np
@@ -91,49 +91,46 @@ class KMeans:
             # Custom
             pass
 
-def get_labels(self):
-    """        Calculates the closest centroid of all points in X
-    and assigns each point to the closest centroid
-    """
-    #######################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #######################################################
-    self.labels = np.random.randint(self.K, size=self.X.shape[0])
+    def get_labels(self):
+        """        Calculates the closest centroid of all points in X
+        and assigns each point to the closest centroid
+        """
+        
+        mat_distance = distance(self.X, self.centroids)
+        self.labels = np.argmin(mat_distance, axis=1)
+
+    def get_centroids(self):
+        """
+        Calculates coordinates of centroids based on the coordinates of all the points assigned to the centroid
+        """
+        #######################################################
+        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
+        ##  AND CHANGE FOR YOUR OWN CODE
+        #######################################################
+        pass
 
 
-def get_centroids(self):
-    """
-    Calculates coordinates of centroids based on the coordinates of all the points assigned to the centroid
-    """
-    #######################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #######################################################
-    pass
+    def converges(self):
+        """
+        Checks if there is a difference between current and old centroids
+        """
+        #######################################################
+        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
+        ##  AND CHANGE FOR YOUR OWN CODE
+        #######################################################
+        return True
 
 
-def converges(self):
-    """
-    Checks if there is a difference between current and old centroids
-    """
-    #######################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #######################################################
-    return True
-
-
-def fit(self):
-    """
-    Runs K-Means algorithm until it converges or until the number
-    of iterations is smaller than the maximum number of iterations.
-    """
-    #######################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #######################################################
-    pass
+    def fit(self):
+        """
+        Runs K-Means algorithm until it converges or until the number
+        of iterations is smaller than the maximum number of iterations.
+        """
+        #######################################################
+        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
+        ##  AND CHANGE FOR YOUR OWN CODE
+        #######################################################
+        pass
 
 
 def withinClassDistance(self):
@@ -171,12 +168,13 @@ def distance(X, C):
         i-th point of the first set an the j-th point of the second set
     """
 
-    #########################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #########################################################
-    return np.random.rand(X.shape[0], C.shape[0])
+    distances = np.zeros((X.shape[0], C.shape[0]))
+    
+    for i in range(X.shape[0]):
+        for j in range(C.shape[0]):
+            distances[i, j] = np.sqrt(np.sum((X[i] - C[j]) ** 2))
 
+    return distances
 
 def get_colors(centroids):
     """

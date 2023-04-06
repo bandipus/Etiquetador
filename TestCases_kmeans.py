@@ -30,7 +30,7 @@ class TestCases(unittest.TestCase):
             km = KMeans(input, self.test_cases['K'][ix])
             km._init_centroids()
             np.testing.assert_array_equal(km.centroids, self.test_cases['init_centroid'][ix])
-"""
+
     def test_04_distance(self):
         for ix, input in enumerate(self.test_cases['shape']):
             dist = distance(input, self.test_cases['init_centroid'][ix])
@@ -42,7 +42,7 @@ class TestCases(unittest.TestCase):
             km._init_centroids()
             km.get_labels()
             np.testing.assert_array_equal(km.labels, self.test_cases['labels'][ix])
-
+"""
     def test_06_get_centroids(self):
         for ix, input in enumerate(self.test_cases['input']):
             km = KMeans(input, self.test_cases['K'][ix])
