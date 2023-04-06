@@ -64,20 +64,41 @@ class KMeans:
         ##  THIS FUNCTION CAN BE MODIFIED FROM THIS POINT, if needed
         #############################################################
 
-def _init_centroids(self):
-    """
-    Initialization of centroids
-    """
+    def _init_centroids(self):
+        """
+        Initialization of centroids
+        """
 
-    centroids = np.zeros((self.K, self.X.shape[1]))
-    old_centroids = np.zeros((self.K, self.X.shape[1]))
+        self.old_centroids = np.zeros((self.K, self.X.shape[1]))
+        self.centroids = np.zeros((self.K, self.X.shape[1]))
 
-    if self.options["km_init"] == "first":
-        centroids = 0
-    elif self.options["km_init"] == "random":
-        cetroids = 0
-    else:
-        centroids = 0
+        if self.options['km_init'] == 'first':
+            temp_dict = {}
+            for i in self.X:
+                temp_dict[tuple(i)] = 1
+            unique_points = np.array(list(temp_dict.keys()))
+            self.centroids = unique_points[:self.K]
+
+        elif self.options['km_init'] == 'random':
+            temp_dict = {}
+            for i in self.X:
+                temp_dict[tuple(i)] = 1
+            unique_points = np.array(list(temp_dict.keys()))
+            
+            np.random.shuffle(unique_points)
+            self.centroids = unique_points[:self.K]
+        else:
+            # Custom
+            pass
+        
+        """
+        if self.options['km_init'].lower() == 'first':
+            self.centroids = np.random.rand(self.K, self.X.shape[1])
+            self.old_centroids = np.random.rand(self.K, self.X.shape[1])
+        else:
+            self.centroids = np.random.rand(self.K, self.X.shape[1])
+            self.old_centroids = np.random.rand(self.K, self.X.shape[1])
+        """
 
 def get_labels(self):
     """        Calculates the closest centroid of all points in X
