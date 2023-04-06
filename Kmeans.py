@@ -90,15 +90,6 @@ class KMeans:
         else:
             # Custom
             pass
-        
-        """
-        if self.options['km_init'].lower() == 'first':
-            self.centroids = np.random.rand(self.K, self.X.shape[1])
-            self.old_centroids = np.random.rand(self.K, self.X.shape[1])
-        else:
-            self.centroids = np.random.rand(self.K, self.X.shape[1])
-            self.old_centroids = np.random.rand(self.K, self.X.shape[1])
-        """
 
 def get_labels(self):
     """        Calculates the closest centroid of all points in X
