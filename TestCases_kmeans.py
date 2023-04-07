@@ -42,7 +42,7 @@ class TestCases(unittest.TestCase):
             km._init_centroids()
             km.get_labels()
             np.testing.assert_array_equal(km.labels, self.test_cases['labels'][ix])
-"""
+
     def test_06_get_centroids(self):
         for ix, input in enumerate(self.test_cases['input']):
             km = KMeans(input, self.test_cases['K'][ix])
@@ -61,7 +61,7 @@ class TestCases(unittest.TestCase):
             old_centroid, centroid, bool_value = self.test_cases['converge'][ix]
             km.old_centroids, km.centroids = old_centroid, centroid
             self.assertEqual(km.converges(), bool_value)
-
+"""
     def test_08_Kmeans(self):
         for ix, input in enumerate(self.test_cases['input']):
             km = KMeans(input, self.test_cases['K'][ix])

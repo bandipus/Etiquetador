@@ -103,22 +103,30 @@ class KMeans:
         """
         Calculates coordinates of centroids based on the coordinates of all the points assigned to the centroid
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        pass
+        
+        unique_labels = np.unique(self.labels)
+
+        count_dict = {label: [] for label in unique_labels}
+        points_dict = {label: [] for label in unique_labels}
+
+        for i, label in enumerate(self.labels):
+            point = self.X[i]
+            count_dict[label].append(point)
+            points_dict[label].append(point)
+
+        new_centroids = np.array([np.mean(count_dict[label], axis=0) for label in unique_labels])
+        self.old_centroids = self.centroids
+        self.centroids = new_centroids
+        
+        self.points_in_every_centroid = points_dict
 
 
     def converges(self):
         """
         Checks if there is a difference between current and old centroids
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        return True
+        
+        return np.allclose(self.centroids, self.old_centroids)
 
 
     def fit(self):
