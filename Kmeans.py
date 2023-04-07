@@ -104,41 +104,39 @@ class KMeans:
         Calculates coordinates of centroids based on the coordinates of all the points assigned to the centroid
         """
         
+        self.old_centroids = self.centroids
+
         unique_labels = np.unique(self.labels)
 
         count_dict = {label: [] for label in unique_labels}
-        points_dict = {label: [] for label in unique_labels}
 
         for i, label in enumerate(self.labels):
             point = self.X[i]
             count_dict[label].append(point)
-            points_dict[label].append(point)
 
-        new_centroids = np.array([np.mean(count_dict[label], axis=0) for label in unique_labels])
-        self.old_centroids = self.centroids
-        self.centroids = new_centroids
-        
-        self.points_in_every_centroid = points_dict
-
+        self.centroids = np.array([np.mean(count_dict[label], axis=0) for label in unique_labels])
 
     def converges(self):
         """
         Checks if there is a difference between current and old centroids
         """
         
-        return np.allclose(self.centroids, self.old_centroids)
-
+        if self.options["tolerance"] != "0":
+            return np.allclose(self.centroids, self.old_centroids, atol=self.options["tolerance"])
+        else:
+            return np.allclose(self.centroids, self.old_centroids)
 
     def fit(self):
         """
         Runs K-Means algorithm until it converges or until the number
         of iterations is smaller than the maximum number of iterations.
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        pass
+        self._init_centroids()
+        
+        while not self.converges() and self.num_iter != self.options["max_iter"]:
+            self.get_labels()
+            self.get_centroids()
+            self.num_iter += 1
 
 
     def withinClassDistance(self):
