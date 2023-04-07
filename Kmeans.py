@@ -141,27 +141,31 @@ class KMeans:
         pass
 
 
-def withinClassDistance(self):
-    """
-     returns the within class distance of the current clustering
-    """
+    def withinClassDistance(self):
+        """
+         returns the within class distance of the current clustering
+        """
+        WCD = 0
+        N = len(self.X)
+        for label, points in self.points_in_every_centroid.items():
+            cx = self.centroids[label]
+            diff = points - cx
+            WCD += np.sum(np.linalg.norm(diff, axis=1) ** 2)
+        if WCD != 0:
+            WCD /= N
+        print(WCD)
+        return WCD
 
-    #######################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #######################################################
-    return np.random.rand()
 
-
-def find_bestK(self, max_K):
-    """
-     sets the best k anlysing the results up to 'max_K' clusters
-    """
-    #######################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #######################################################
-    pass
+    def find_bestK(self, max_K):
+        """
+         sets the best k anlysing the results up to 'max_K' clusters
+        """
+        for k in range(2, max_K+1):
+            self.K = k
+        """
+        self.K =
+        """
 
 
 def distance(X, C):

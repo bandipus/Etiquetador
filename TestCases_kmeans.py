@@ -60,6 +60,9 @@ class TestCases(unittest.TestCase):
             km._init_centroids()
             old_centroid, centroid, bool_value = self.test_cases['converge'][ix]
             km.old_centroids, km.centroids = old_centroid, centroid
+            km.get_labels()
+            km.get_centroids()
+            km.withinClassDistance()
             self.assertEqual(km.converges(), bool_value)
 """
     def test_08_Kmeans(self):
