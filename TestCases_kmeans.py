@@ -67,7 +67,7 @@ class TestCases(unittest.TestCase):
             km = KMeans(input, self.test_cases['K'][ix])
             km.fit()
             np.testing.assert_array_equal(km.centroids, self.test_cases['kmeans'][ix])
-"""
+
     def test_09_find_bestK(self):
         for ix, input in enumerate(self.test_cases['input']):
             km = KMeans(input, self.test_cases['K'][ix])
@@ -78,7 +78,7 @@ class TestCases(unittest.TestCase):
         for ix, centroid in enumerate(self.test_cases['kmeans']):
             color = get_colors(centroid)
             self.assertCountEqual(color, self.test_cases['color'][ix])
-"""
+
 
 if __name__ == "__main__":
     unittest.main()

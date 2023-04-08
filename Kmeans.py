@@ -143,15 +143,19 @@ class KMeans:
         """
          returns the within class distance of the current clustering
         """
+        unique_labels = np.unique(self.labels)
+        count_dict = {label: [] for label in unique_labels}
+        for i, label in enumerate(self.labels):
+            point = self.X[i]
+            count_dict[label].append(point)
         WCD = 0
         N = len(self.X)
-        for label, points in self.points_in_every_centroid.items():
+        for label, points in count_dict.items():
             cx = self.centroids[label]
             diff = points - cx
             WCD += np.sum(np.linalg.norm(diff, axis=1) ** 2)
         if WCD != 0:
             WCD /= N
-        print(WCD)
         return WCD
 
 
@@ -159,12 +163,21 @@ class KMeans:
         """
          sets the best k anlysing the results up to 'max_K' clusters
         """
+        llindar = 20
+        self.K = 1
+        self.fit()
+        lastWCD = self.withinClassDistance()
         for k in range(2, max_K+1):
             self.K = k
-        """
-        self.K =
-        """
-
+            self.fit()
+            actualWCD = self.withinClassDistance()
+            PDEC = 100 * actualWCD / lastWCD
+            lastWCD = actualWCD
+            if (100 - PDEC <= llindar):
+                self.K = k-1
+                print("Found ideal K: ", k-1)
+                return;
+        print("Found ideal K: ", max_K)
 
 def distance(X, C):
     """
@@ -195,9 +208,16 @@ def get_colors(centroids):
     Returns:
         labels: list of K labels corresponding to one of the 11 basic colors
     """
-
-    #########################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #########################################################
-    return list(utils.colors)
+    colorprob = utils.get_color_prob(centroids)
+    labels = []
+    for row in colorprob:
+        max = 0
+        index = 0
+        i = 0
+        for prob in row:
+            if (prob >= max):
+                max = prob
+                index = i
+            i += 1
+        labels.append(utils.colors[index])
+    return labels
