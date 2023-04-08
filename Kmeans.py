@@ -208,16 +208,10 @@ def get_colors(centroids):
     Returns:
         labels: list of K labels corresponding to one of the 11 basic colors
     """
-    colorprob = utils.get_color_prob(centroids)
-    labels = []
-    for row in colorprob:
-        max = 0
-        index = 0
-        i = 0
-        for prob in row:
-            if (prob >= max):
-                max = prob
-                index = i
-            i += 1
-        labels.append(utils.colors[index])
-    return labels
+    color_prob = utils.get_color_prob(centroids)
+
+    max_index = np.argmax(color_prob, axis=1)
+
+    color_labels = [utils.colors[i] for i in max_index]
+
+    return color_labels
