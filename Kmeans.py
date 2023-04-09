@@ -108,13 +108,12 @@ class KMeans:
 
         unique_labels = np.unique(self.labels)
 
-        count_dict = {label: [] for label in unique_labels}
+        self.count_dict = {label: [] for label in unique_labels}
 
         for i, label in enumerate(self.labels):
             point = self.X[i]
-            count_dict[label].append(point)
-
-        self.centroids = np.array([np.mean(count_dict[label], axis=0) for label in unique_labels])
+            self.count_dict[label].append(point)
+        self.centroids = np.array([np.mean(self.count_dict[label], axis=0) for label in unique_labels])
 
     def converges(self):
         """
@@ -143,14 +142,9 @@ class KMeans:
         """
          returns the within class distance of the current clustering
         """
-        unique_labels = np.unique(self.labels)
-        count_dict = {label: [] for label in unique_labels}
-        for i, label in enumerate(self.labels):
-            point = self.X[i]
-            count_dict[label].append(point)
         WCD = 0
         N = len(self.X)
-        for label, points in count_dict.items():
+        for label, points in self.count_dict.items():
             cx = self.centroids[label]
             diff = points - cx
             WCD += np.sum(np.linalg.norm(diff, axis=1) ** 2)
@@ -175,9 +169,7 @@ class KMeans:
             lastWCD = actualWCD
             if (100 - PDEC <= llindar):
                 self.K = k-1
-                print("Found ideal K: ", k-1)
                 return;
-        print("Found ideal K: ", max_K)
 
 def distance(X, C):
     """
@@ -190,12 +182,8 @@ def distance(X, C):
         dist: PxK numpy array position ij is the distance between the
         i-th point of the first set an the j-th point of the second set
     """
-
-    distances = np.zeros((X.shape[0], C.shape[0]))
     
-    for i in range(X.shape[0]):
-        for j in range(C.shape[0]):
-            distances[i, j] = np.sqrt(np.sum((X[i] - C[j]) ** 2))
+    distances = np.sqrt(np.sum((X[:, np.newaxis, :] - C) ** 2, axis=2))
 
     return distances
 
