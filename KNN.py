@@ -1,11 +1,11 @@
-__authors__ = 'TO_BE_FILLED'
-__group__ = 'TO_BE_FILLED'
+__authors__ = ['1636012','1637892','1633445']
+__group__ = 'DM.18'
 
 import numpy as np
 import math
 import operator
 from scipy.spatial.distance import cdist
-
+from utils import * 
 
 class KNN:
     def __init__(self, train_data, labels):
@@ -18,14 +18,18 @@ class KNN:
     def _init_train(self, train_data):
         """
         initializes the train data
-        :param train_data: PxMxNx3 matrix corresponding to P color images
-        :return: assigns the train set to the matrix self.train_data shaped as PxD (P points in a D dimensional space)
+        : param train_data : PxMxN matrix corresponding to P greyscale images
+        : return : assigns the train set to the matrix self . train_data shaped as PxD
+        ( P points in a D dimensional space )
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        self.train_data = np.random.randint(8, size=[10, 14400])
+        
+        train_data = train_data.astype(float)
+        
+        images = train_data.shape[0]
+        dims = train_data.shape[1] * train_data.shape[2]
+        train_data = train_data.reshape(images,dims)
+
+        self.train_data = train_data
 
     def get_k_neighbours(self, test_data, k):
         """
@@ -33,13 +37,21 @@ class KNN:
         :param test_data: array that has to be shaped to a NxD matrix (N points in a D dimensional space)
         :param k: the number of neighbors to look at
         :return: the matrix self.neighbors is created (NxK)
-                 the ij-th entry is the j-th nearest train point to the i-th test point
+        the ij-th entry is the j-th nearest train point to the i-th test point
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        self.neighbors = np.random.randint(k, size=[test_data.shape[0], k])
+
+        test_data = test_data.astype(float)
+
+        images = test_data.shape[0]
+        dims = test_data.shape[1] * test_data.shape[2]
+        test_data = test_data.reshape(images,dims)
+        self.test_data = test_data
+
+        distances = cdist(self.test_data, self.train_data)
+
+        indexs = distances.argsort(axis=1)[:,:k]
+
+        self.neighbors = self.labels[indexs]
 
     def get_class(self):
         """
