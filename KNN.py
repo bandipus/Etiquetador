@@ -65,7 +65,24 @@ class KNN:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        return np.random.randint(10, size=self.neighbors.size), np.random.random(self.neighbors.size)
+        most_frequent_neighbors = []
+        value_counts=[]
+
+        for neighbor_row in self.neighbors:
+            unique, index, counts = np.unique(neighbor_row, return_counts=True, return_index=True)
+            value_counts.append(counts)
+            values_where_max_starts = np.where(counts == np.amax(counts))
+
+            if values_where_max_starts[0].size == index.size:
+                index_where_the_value_appears_firts_time = index.min()
+            elif values_where_max_starts[0].size == 1:
+                index_where_the_value_appears_firts_time = index[values_where_max_starts[0][0]]
+            else:
+                index_where_the_value_appears_firts_time = index[values_where_max_starts[0]].min()
+
+            most_frequent_neighbors.append(neighbor_row[index_where_the_value_appears_firts_time])
+
+        return np.array(most_frequent_neighbors)
 
     def predict(self, test_data, k):
         """
