@@ -5,7 +5,52 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import math
 
-def read_dataset(ROOT_FOLDER = './images/', gt_json='./test/gt.json', w=60, h=80):
+
+def crop_images(images, upper, lower):
+    cropped_image = []
+    for image, top_cord, bottom_cord in zip(images, upper, lower):
+        cropped_image.append(image[top_cord[1]:bottom_cord[1], top_cord[0]:bottom_cord[0], :])
+    return np.array(cropped_image, dtype=object)
+
+
+def read_extended_dataset(root_folder='./images/', extended_gt_json='./images/gt_reduced.json', w=60, h=80):
+    """
+        reads the extended ground truth, returns:
+            images: the images in color (80x60x3)
+            shape labels: array of strings
+            color labels: array of arrays of strings
+            upper_left_coord: (x, y) coordinates of the window top left
+            lower_right_coord: (x, y) coordinates of the window bottom right
+            background: array of booleans indicating if the defined window contains background or not
+    """
+    ground_truth_extended = json.load(open(extended_gt_json, 'r'))
+    img_names, class_labels, color_labels, upper, lower, background = [], [], [], [], [], []
+
+    for k, v in ground_truth_extended.items():
+        img_names.append(os.path.join(root_folder, 'train', k))
+        class_labels.append(v[0])
+        color_labels.append(v[1])
+        upper.append(v[2])
+        lower.append(v[3])
+        background.append(True if v[4] == 1 else False)
+
+    imgs = load_imgs(img_names, w, h, True)
+
+    idxs = np.arange(imgs.shape[0])
+    np.random.seed(42)
+    np.random.shuffle(idxs)
+
+    imgs = imgs[idxs]
+    class_labels = np.array(class_labels)[idxs]
+    color_labels = np.array(color_labels, dtype=object)[idxs]
+    upper = np.array(upper)[idxs]
+    lower = np.array(lower)[idxs]
+    background = np.array(background)[idxs]
+
+    return imgs, class_labels, color_labels, upper, lower, background
+
+
+def read_dataset(root_folder='./images/', gt_json='./test/gt.json', w=60, h=80, with_color=True):
     """
         reads the dataset (train and test), returns the images and labels (class and colors) for both sets
     """
@@ -15,16 +60,17 @@ def read_dataset(ROOT_FOLDER = './images/', gt_json='./test/gt.json', w=60, h=80
     train_img_names, train_class_labels, train_color_labels = [], [], []
     test_img_names, test_class_labels, test_color_labels = [], [], []
     for k, v in ground_truth['train'].items():
-        train_img_names.append(os.path.join(ROOT_FOLDER, 'train', k))
+        train_img_names.append(os.path.join(root_folder, 'train', k))
         train_class_labels.append(v[0])
         train_color_labels.append(v[1])
 
     for k, v in ground_truth['test'].items():
-        test_img_names.append(os.path.join(ROOT_FOLDER, 'test', k))
+        test_img_names.append(os.path.join(root_folder, 'test', k))
         test_class_labels.append(v[0])
         test_color_labels.append(v[1])
 
-    train_imgs, test_imgs = load_imgs(train_img_names, test_img_names)
+    train_imgs = load_imgs(train_img_names, w, h, with_color)
+    test_imgs = load_imgs(test_img_names, w, h, with_color)
 
     np.random.seed(42)
 
@@ -32,33 +78,31 @@ def read_dataset(ROOT_FOLDER = './images/', gt_json='./test/gt.json', w=60, h=80
     np.random.shuffle(idxs)
     train_imgs = train_imgs[idxs]
     train_class_labels = np.array(train_class_labels)[idxs]
-    train_color_labels = np.array(train_color_labels)[idxs]
+    train_color_labels = np.array(train_color_labels, dtype=object)[idxs]
 
     idxs = np.arange(test_imgs.shape[0])
     np.random.shuffle(idxs)
     test_imgs = test_imgs[idxs]
     test_class_labels = np.array(test_class_labels)[idxs]
-    test_color_labels = np.array(test_color_labels)[idxs]
+    test_color_labels = np.array(test_color_labels, dtype=object)[idxs]
 
     return train_imgs, train_class_labels, train_color_labels, test_imgs, test_class_labels, test_color_labels
 
 
-def load_imgs(train_img_names, test_img_names, w=60, h=80):
-    train_imgs, test_imgs = [], []
-
-    for tr in train_img_names:
-        train_imgs.append(read_one_img(tr+ '.jpg'))
-
-    for te in test_img_names:
-        test_imgs.append(read_one_img(te + '.jpg'))
-
-    return np.array(train_imgs), np.array(test_imgs)
+def load_imgs(img_names, w, h, with_color):
+    imgs = []
+    for tr in img_names:
+        imgs.append(read_one_img(tr + '.jpg', w, h, with_color))
+    return np.array(imgs)
 
 
-def read_one_img(img_name, w=60, h=80):
+def read_one_img(img_name, w, h, with_color):
     img = Image.open(img_name)
 
-    img = img.convert("L")
+    if with_color:
+        img = img.convert("RGB")
+    else:
+        img = img.convert("L")
 
     if img.size != (w, h):
         img = img.resize((w, h))
@@ -67,7 +111,9 @@ def read_one_img(img_name, w=60, h=80):
 
 def visualize_retrieval(imgs, topN, info=None, ok=None, title='', query=None):
     def add_border(color):
-        return np.stack([np.pad(imgs[i, :, :, c], 3, mode='constant', constant_values=color[c]) for c in range(3)], axis=2)
+        return np.stack(
+            [np.pad(imgs[i, :, :, c], 3, mode='constant', constant_values=color[c]) for c in range(3)], axis=2
+        )
 
     columns = 4
     rows = math.ceil(topN/columns)
@@ -104,7 +150,9 @@ def Plot3DCloud(km, rows=1, cols=1, spl_id=1):
 
     for k in range(km.K):
         Xl = km.X[km.labels == k, :]
-        ax.scatter(Xl[:, 0], Xl[:, 1], Xl[:, 2], marker='.', c=km.centroids[np.ones((Xl.shape[0]),dtype='int')*k, :]/255)
+        ax.scatter(
+            Xl[:, 0], Xl[:, 1], Xl[:, 2], marker='.', c=km.centroids[np.ones((Xl.shape[0]), dtype='int') * k, :] / 255
+        )
 
     plt.xlabel('dim 1')
     plt.ylabel('dim 2')
@@ -138,5 +186,3 @@ def visualize_k_means(kmeans, img_shape):
     Plot3DCloud(kmeans, 1, 3, 3)
     plt.title('núvol de punts')
     plt.show()
-
-

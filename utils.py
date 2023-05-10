@@ -1,35 +1,35 @@
 import numpy as np
 
+
 def rgb2gray(rgb):
-    return np.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
-
-def Sigmoid(s,t,b):
-    y = 1.0/(1.0+np.exp(-np.double(b)*(np.double(s)-np.double(t))))
-
-    return y
+    return np.dot(rgb[..., :3], [0.2989, 0.5870, 0.1140])
 
 
-def TripleSigmoid_E(s,tx,ty,alfa_x,alfa_y,bx,by,be,ex,ey,angle_e):
+def Sigmoid(s, t, b):
+    return 1.0 / (1.0 + np.exp(-np.double(b) * (np.double(s) - np.double(t))))
 
+
+def TripleSigmoid_E(s, tx, ty, alfa_x, alfa_y, bx, by, be, ex, ey, angle_e):
     sT = np.double(s.T) - np.hstack([tx, ty])
-    sR = np.hstack([sT[:,0].reshape((-1,1))*np.cos(alfa_y)+sT[:,1].reshape((-1,1))*np.sin(alfa_y),\
-                -sT[:,0].reshape((-1,1))*np.sin(alfa_x)+sT[:,1].reshape((-1,1))*np.cos(alfa_x)])
-    sRE= np.hstack([sT[:,0].reshape((-1,1))*np.cos(angle_e)+sT[:,1].reshape((-1,1))*np.sin(angle_e),\
-                -sT[:,0].reshape((-1,1))*np.sin(angle_e)+sT[:,1].reshape((-1,1))*np.cos(angle_e)])
-    ex = (ex==0.0) + ex
-    ey = (ey==0.0) + ey
+    sR = np.hstack([sT[:, 0].reshape((-1, 1)) * np.cos(alfa_y) + sT[:, 1].reshape((-1, 1)) * np.sin(alfa_y),
+                    -sT[:, 0].reshape((-1, 1)) * np.sin(alfa_x) + sT[:, 1].reshape((-1, 1)) * np.cos(alfa_x)])
+    sRE = np.hstack([sT[:, 0].reshape((-1, 1)) * np.cos(angle_e) + sT[:, 1].reshape((-1, 1)) * np.sin(angle_e),
+                     -sT[:, 0].reshape((-1, 1)) * np.sin(angle_e) + sT[:, 1].reshape((-1, 1)) * np.cos(angle_e)])
+    ex = (ex == 0.0) + ex
+    ey = (ey == 0.0) + ey
 
-    y = 1.0/np.hstack([1.0+np.exp(-sR*np.hstack([by, bx])),\
-                    1.0+np.exp(-be*(np.sum((sRE/np.hstack([ex, ey]))**2.0,axis=1).reshape((-1,1))-1.0))])
+    y = 1.0 / np.hstack([1.0 + np.exp(-sR * np.hstack([by, bx])),
+                         1.0 + np.exp(-be * (np.sum((sRE / np.hstack([ex, ey])) ** 2, axis=1).reshape((-1, 1)) - 1.0))])
 
-    return np.prod(y,axis=1).reshape((-1,1))
+    return np.prod(y, axis=1).reshape((-1, 1))
+
 
 def RGB2Lab(Ima):
     # RGB > XYZ transformation matrix (sRGB with D65)
     M = np.vstack(([0.412424, 0.357579, 0.180464], [0.212656, 0.715158, 0.0721856], [0.0193324, 0.119193, 0.950444]))
-    Xn = 0.9505;
-    Yn = 1.0000;
-    Zn = 1.0891;
+    Xn = 0.9505
+    Yn = 1.0000
+    Zn = 1.0891
 
     Ima = Ima / 255.0
     S = np.shape(Ima)
@@ -46,14 +46,14 @@ def RGB2Lab(Ima):
     XYZ = np.dot(M, lRGB)
 
     f_X2 = (XYZ[0] / Xn > 0.008856) * ((XYZ[0] / Xn) ** (1.0 / 3.0)) + (XYZ[0] / Xn <= 0.008856) * (
-                7.787 * (XYZ[0] / Xn) + (16.0 / 116.0))
+            7.787 * (XYZ[0] / Xn) + (16.0 / 116.0))
     f_Y2 = (XYZ[1] / Yn > 0.008856) * ((XYZ[1] / Yn) ** (1.0 / 3.0)) + (XYZ[1] / Yn <= 0.008856) * (
-                7.787 * (XYZ[1] / Yn) + (16.0 / 116.0))
+            7.787 * (XYZ[1] / Yn) + (16.0 / 116.0))
     f_Z2 = (XYZ[2] / Zn > 0.008856) * ((XYZ[2] / Zn) ** (1.0 / 3.0)) + (XYZ[2] / Zn <= 0.008856) * (
-                7.787 * (XYZ[2] / Zn) + (16.0 / 116.0))
+            7.787 * (XYZ[2] / Zn) + (16.0 / 116.0))
 
     L2 = (XYZ[1] / Yn > 0.008856) * ((116.0 * ((XYZ[1] / Yn) ** (1.0 / 3.0))) - 16.0) + (XYZ[1] / Yn <= 0.008856) * (
-                903.3 * (XYZ[1] / Yn))
+            903.3 * (XYZ[1] / Yn))
     a2 = 500.0 * (f_X2 - f_Y2)
     b2 = 200.0 * (f_Y2 - f_Z2)
 
@@ -64,6 +64,7 @@ def RGB2Lab(Ima):
     # ImaLab[:,:,2] = reshape(b2,(NC,NF)).T
 
     return ImaLab
+
 
 def get_color_prob(ima, positions=None, patchSize=1):
     # Constants
@@ -96,14 +97,14 @@ def get_color_prob(ima, positions=None, patchSize=1):
         L = Lab[:, 0].flatten()
         a = Lab[:, 1].flatten()
         b = Lab[:, 2].flatten()
-        nr = S[0];
-        nc = 1;  # Image dimensions: rows, columns, and channels
+        nr = S[0]
+        nc = 1  # Image dimensions: rows, columns, and channels
     else:
         L = Lab[:, :, 0].flatten()
         a = Lab[:, :, 1].flatten()
         b = Lab[:, :, 2].flatten()
-        nr = S[0];
-        nc = S[1];  # Image dimensions: rows, columns, and channels
+        nr = S[0]
+        nc = S[1]  # Image dimensions: rows, columns, and channels
 
     npix = nr * nc  # Number of pixels
     CD = np.zeros((npix, numColors))  # Color descriptor to store results
@@ -127,7 +128,7 @@ def get_color_prob(ima, positions=None, patchSize=1):
         beta_e = np.reshape(parameters[k, 6, m], (npix, 1))
         ex = np.reshape(parameters[k, 7, m], (npix, 1))
         ey = np.reshape(parameters[k, 8, m], (npix, 1))
-        angle_e = np.reshape(parameters[k, 9, m], (npix, 1));  # figure;plot(angle_e); show()
+        angle_e = np.reshape(parameters[k, 9, m], (npix, 1))  # figure;plot(angle_e); show()
         CD[:, k] = (np.double(beta_e != 0.0) * TripleSigmoid_E(np.vstack((a, b)), tx, ty, alfa_x, alfa_y, beta_x,
                                                                beta_y, beta_e, ex, ey, angle_e)).T
 
@@ -151,7 +152,8 @@ def get_color_prob(ima, positions=None, patchSize=1):
     CD = CD / np.expand_dims(np.sum(CD, axis=len(CD.shape) - 1), axis=len(CD.shape) - 1)
     return CD
 
-colors=np.array(['Red','Orange','Brown','Yellow','Green','Blue','Purple','Pink','Black','Grey','White'])
+
+colors = np.array(['Red', 'Orange', 'Brown', 'Yellow', 'Green', 'Blue', 'Purple', 'Pink', 'Black', 'Grey', 'White'])
 
 parameters = np.array([[[  4.24199636e-01,   2.29563220e-01,  -1.17335858e-01,  -4.43169080e-01,   0.00000000e+00,   0.00000000e+00],\
                      [  2.49359126e-01,   6.63190063e-01,   5.18007668e-01,   1.07591884e+00,   0.00000000e+00,   0.00000000e+00],\
@@ -234,9 +236,7 @@ parameters = np.array([[[  4.24199636e-01,   2.29563220e-01,  -1.17335858e-01,  
                      [  0.00000000e+00,   7.87254713e+00,   6.98237582e+00,   7.50204671e+00,   6.90048122e+00,   7.39318578e+00],\
                      [  0.00000000e+00,   3.07016320e-01,   3.41770788e-01,   4.28449446e-01,   4.32023987e-01,  -2.08201846e-02]]])
 
-paramsAchro = np.array([[ 28.28252201,  -0.71423449],\
-                    [ 28.28252201,   0.71423449],\
-                     [ 79.64930057,  -0.30674052],\
-                     [ 79.64930057,   0.30674052]])
+paramsAchro = np.array([[28.28252201, -0.71423449], [28.28252201, 0.71423449], [79.64930057, -0.30674052],
+                        [79.64930057, 0.30674052]])
 
-thrL = np.array([  0,  31,  42,  51,  66,  76, 150], dtype=np.uint8)
+thrL = np.array([0,  31,  42,  51,  66,  76, 150], dtype=np.uint8)
