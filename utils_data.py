@@ -110,9 +110,9 @@ def read_one_img(img_name, w, h, with_color):
 
 
 def visualize_retrieval(imgs, topN, info=None, ok=None, title='', query=None):
-    def add_border(color):
+    def add_border(color, i):
         return np.stack(
-            [np.pad(imgs[i, :, :, c], 3, mode='constant', constant_values=color[c]) for c in range(3)], axis=2
+            [np.pad(imgs[i][:, :, c], pad_width=3, mode='constant', constant_values=color[c]) for c in range(3)], axis=2
         )
 
     columns = 4
@@ -133,7 +133,10 @@ def visualize_retrieval(imgs, topN, info=None, ok=None, title='', query=None):
             sp = (sp - 1) // (columns-1) + 1 + sp
         fig.add_subplot(rows, columns, sp)
         if ok is not None:
-            im = add_border([0, 255, 0] if ok[i] else [255, 0, 0])
+            if ok[i] == True:
+                im = add_border([0, 255, 0], i)
+            else:
+                im = add_border([255, 0, 0], i)
         else:
             im = imgs[i]
         plt.imshow(im)

@@ -22,7 +22,6 @@ class KNN:
         : return : assigns the train set to the matrix self . train_data shaped as PxD
         ( P points in a D dimensional space )
         """
-        
         train_data = train_data.astype(float)
         
         images = train_data.shape[0]
