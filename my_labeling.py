@@ -7,7 +7,7 @@ from Kmeans import *
 import KNN as knn
 from KNN import *
 from utils_data import read_dataset, read_extended_dataset, crop_images, visualize_retrieval
-
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
 
@@ -141,3 +141,53 @@ if __name__ == '__main__':
     #Retrieval_by_shape(imgs, knnLabelsList, "Handbags", class_labels, color_labels)
 
     Retrieval_combined(imgs, kmeansLabelsList, knnLabelsList, "red", "haNdbags", class_labels, color_labels)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    """
+    # Generate KMeans plots
+
+    kmeansLabelsList = []
+    kmeansLabelsPlot = []
+
+    for k_value in range(1,10):
+        for img in cropped_images:
+            km = KMeans(img, k_value)
+            km.fit()
+            kmeansLabelsList.append(get_colors(km.centroids))
+        
+        kmeansLabelsPlot.append(Get_color_accuracy(kmeansLabelsList, color_labels))
+        kmeansLabelsList.clear()
+
+    fig, ax = plt.subplots()
+    ax.set_title("Accuracy of Kmeans")
+    ax.set_ylabel("Accuracy")
+    ax.set_xlabel("K in Kmeans")
+    ax.plot(range(1,10), kmeansLabelsPlot, color="tab:purple", marker='o')
+    plt.show()
+    
+
+    # Generate KNN Plots
+
+    train_imgs = train_imgs.reshape(train_imgs.shape[0], train_imgs.shape[1], train_imgs.shape[2] * train_imgs.shape[3])
+    imgsknn = imgs.reshape(imgs.shape[0], imgs.shape[1], imgs.shape[2] * imgs.shape[3])
+    knn = KNN(train_imgs, train_class_labels)
+    knnLabelsList = []
+
+    for i in range(3,20):
+        knnLabels = (knn.predict(imgsknn, i))
+        knnLabelsList.append(Get_shape_accuracy(knnLabels,class_labels))
+    
+    fig, ax = plt.subplots()
+    ax.set_title("Accuracy of KNN")
+    ax.set_ylabel("Accuracy")
+    ax.set_xlabel("k in KNN")
+    ax.plot(range(3,20), knnLabelsList, color="tab:purple", marker='o')
+    plt.show()
+    """
