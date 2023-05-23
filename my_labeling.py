@@ -41,7 +41,7 @@ if __name__ == '__main__':
                     truefalse.append(False)
         print(truefalse)
         # Uncomment this to show query list in a window
-        # visualize_retrieval(list, len(list), infoList, None, "Quality: Retrieval by color " + search_string, None)
+        visualize_retrieval(list, len(list), infoList, None, "Quality: Retrieval by color " + search_string, None)
         return [list, infoList, truefalse]
 
     def Retrieval_by_shape(imgs_list, labels_knn, search_string, imgs_shapes=None, imgs_colors=None):
@@ -61,7 +61,7 @@ if __name__ == '__main__':
                     truefalse.append(False)
         print(truefalse)
         # Uncomment this to show query list in a window
-        # visualize_retrieval(list, len(list), infoList, truefalse, "Quality: Retrieval by shape " + search_string, None)
+        visualize_retrieval(list, len(list), infoList, None, "Quality: Retrieval by shape " + search_string, None)
         return [list, infoList, truefalse]
 
     def Retrieval_combined(imgs_list, tags_kmeans, tags_knn, color_string, shape_string, imgs_shapes=None, imgs_colors=None):
@@ -76,7 +76,7 @@ if __name__ == '__main__':
                 s += " ]"
                 infoList.append(s)
         # Uncomment this to show query list in a window
-        # visualize_retrieval(list, len(list), infoList, None, "Quality: Retrieval by color and shape " + color_string + " and " + shape_string, None)
+        visualize_retrieval(list, len(list), infoList, None, "Quality: Retrieval by color and shape " + color_string + " and " + shape_string, None)
         return [list, infoList]
 
     def get_colors(centroids):
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         km.fit()
         kmeansLabelsList.append(get_colors(km.centroids))
 
-    #Retrieval_by_color(imgs, kmeansLabelsList, "Pink", class_labels, color_labels)
+    Retrieval_by_color(imgs, kmeansLabelsList, "pinK", class_labels, color_labels)
 
     # Getting knn labels
     train_imgs = train_imgs.reshape(train_imgs.shape[0], train_imgs.shape[1], train_imgs.shape[2] * train_imgs.shape[3])
@@ -112,6 +112,6 @@ if __name__ == '__main__':
     knn = KNN(train_imgs, train_class_labels)
     knnLabelsList = knn.predict(imgsknn, 3)
 
-    Retrieval_by_shape(imgs, knnLabelsList, "Handbags", class_labels, color_labels)
+    #Retrieval_by_shape(imgs, knnLabelsList, "Handbags", class_labels, color_labels)
 
     #Retrieval_combined(imgs, kmeansLabelsList, knnLabelsList, "red", "haNdbags", class_labels, color_labels)
