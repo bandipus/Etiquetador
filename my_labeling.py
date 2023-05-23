@@ -7,6 +7,12 @@ from Kmeans import *
 import KNN as knn
 from KNN import *
 from utils_data import read_dataset, read_extended_dataset, crop_images, visualize_retrieval
+import Kmeans as km
+import numpy as np
+from Kmeans import *
+import KNN as knn
+from KNN import *
+from utils_data import read_dataset, read_extended_dataset, crop_images, visualize_retrieval
 
 
 if __name__ == '__main__':
