@@ -1,12 +1,6 @@
-__authors__ = 'TO_BE_FILLED'
-__group__ = 'TO_BE_FILLED'
+__authors__ = ['1636012','1637892','1633445']
+__group__ = 'DM.18'
 
-import Kmeans as km
-import numpy as np
-from Kmeans import *
-import KNN as knn
-from KNN import *
-from utils_data import read_dataset, read_extended_dataset, crop_images, visualize_retrieval
 import Kmeans as km
 import numpy as np
 from Kmeans import *
@@ -106,6 +100,27 @@ if __name__ == '__main__':
         color_labels = [utils.colors[i] for i in max_index]
 
         return color_labels
+    
+    def Kmean_statistics(kmeans, kmax):
+        pass
+    
+    def Get_shape_accuracy(knn_labels, gt_labels):
+        matches = 0
+        for i, label in enumerate(knn_labels):
+            if label == gt_labels[i]:
+                matches += 1
+
+        accuracy = (matches/len(knn_labels))*100
+        return accuracy
+
+    def Get_color_accuracy(kmeans_labels, gt_labels):
+        matches = 0
+        for i,j in zip(kmeans_labels,gt_labels):
+            common_elements = len(set(i) & set(j))
+            matches += common_elements / len(set(i))
+    
+        accuracy = (matches/len(kmeans_labels))*100
+        return accuracy
 
     # Getting kmeans labels
     kmeansLabelsList = []
