@@ -78,7 +78,6 @@ class KMeans:
                 temp_dict[tuple(i)] = 1
             unique_points = np.array(list(temp_dict.keys()))
             self.centroids = unique_points[:self.K]
-
         elif self.options['km_init'] == 'random':
             temp_dict = {}
             for i in self.X:
@@ -87,8 +86,22 @@ class KMeans:
             
             np.random.shuffle(unique_points)
             self.centroids = unique_points[:self.K]
+        elif self.options['km_init'] == 'kmeans++':
+            centroids = [self.X[np.random.choice(self.X.shape[0])]]
+            distances = np.sum((self.X - centroids[0])**2, axis=1)
+
+            for i in range(1, self.K):
+                probabilities = distances / np.sum(distances)
+
+                new_centroid_index = np.random.choice(self.X.shape[0], p=probabilities)
+                new_centroid = self.X[new_centroid_index]
+                centroids.append(new_centroid)
+
+                new_distances = np.sum((self.X - new_centroid)**2, axis=1)
+                distances = np.minimum(distances, new_distances)
+            
+            self.centroids = np.array(centroids)
         else:
-            # Custom
             pass
 
     def get_labels(self):
