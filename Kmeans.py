@@ -151,6 +151,29 @@ class KMeans:
         if WCD != 0:
             WCD /= N
         return WCD
+    
+    def interClassDistance(self):
+        """
+        Calcula la distància inter-class del clustering actual
+        """
+        ICD = 0
+        for label1 in range(self.K-1):
+            for label2 in range(label1+1, self.K):
+                cx1 = self.centroids[label1]
+                cx2 = self.centroids[label2]
+                diff = cx1 - cx2
+                ICD += np.linalg.norm(diff)
+                return ICD
+
+            
+    def fisherCoefficient(self):
+        """
+        Calcula el coeficient de Fisher del clustering actual
+        """
+        WCD = self.withinClassDistance()
+        ICD = self.interClassDistance()
+        FC = ICD / WCD
+        return FC
 
 
     def find_bestK(self, max_K):
@@ -170,6 +193,67 @@ class KMeans:
             if (100 - PDEC <= llindar):
                 self.K = k-1
                 return;
+            
+            
+    def _distance(self, x1, x2):
+        return np.sqrt(np.sum((x1 - x2)**2))
+    
+    
+    def predict(self):
+        labels = []
+        for x in self.X:
+            distances = [self._distance(x, centroid) for centroid in self.centroids]
+            label = np.argmin(distances)
+            labels.append(label)
+        return labels
+
+
+    def find_bestK_Improved(self, max_K):
+
+        best_score = -1
+        self.K = 1
+        self.fit()
+        best_K = 1
+        for k in range(2, max_K + 1):
+            self.K = k
+            self.fit()
+            labels = self.predict()
+            score = silhouette_score(self.X, labels)
+            if score > best_score:
+                best_score = score
+                best_K = k
+                self.K = best_K
+                
+    def find_bestK_differents_heuristics(self, max_K):
+        """
+        Estableix la millor K analitzant els resultats fins a 'max_K' clusters
+        """
+        threshold = 20
+        self.K = 1
+        self.fit()
+        lastWCD = self.withinClassDistance()
+        lastICD = self.interClassDistance()
+        lastFC = self.fisherCoefficient()
+        
+        for k in range(2, max_K+1):
+            self.K = k
+            self.fit()
+            
+            actualWCD = self.withinClassDistance()
+            actualICD = self.interClassDistance()
+            actualFC = self.fisherCoefficient()
+            
+            PDEC_WCD = 100 * actualWCD / lastWCD
+            PDEC_ICD = 100 * actualICD / lastICD
+            PDEC_FC = 100 * actualFC / lastFC
+        
+            lastWCD = actualWCD
+            lastICD = actualICD
+            lastFC = actualFC
+            
+            if (100 - PDEC_WCD <= threshold) or (100 - PDEC_ICD <= threshold) or (100 - PDEC_FC <= threshold):
+                self.K = k-1
+                return
 
 def distance(X, C):
     """
