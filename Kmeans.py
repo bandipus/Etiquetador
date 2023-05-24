@@ -3,6 +3,7 @@ __group__ = 'DM.18'
 
 import numpy as np
 import utils
+from sklearn.metrics import silhouette_score
 
 
 class KMeans:
