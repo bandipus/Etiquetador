@@ -114,12 +114,17 @@ if __name__ == '__main__':
         return accuracy
 
     def Get_color_accuracy(kmeans_labels, gt_labels):
-        matches = 0
+        union_total = 0
+        intersection_total = 0
         for i,j in zip(kmeans_labels,gt_labels):
-            common_elements = len(set(i) & set(j))
-            matches += common_elements / len(set(i))
-    
-        accuracy = (matches/len(kmeans_labels))*100
+            union = set(i).union(j)
+            union_list = list(union)
+            union_total += len(union_list)
+            intersection = set(i).intersection(j)
+            intersection_list = list(intersection)
+            intersection_total += len(intersection_list)
+        print(intersection_total, union_total)
+        accuracy = (intersection_total/union_total)*100
         return accuracy
 
     # Getting kmeans labels
