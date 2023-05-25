@@ -123,7 +123,6 @@ if __name__ == '__main__':
             intersection = set(i).intersection(j)
             intersection_list = list(intersection)
             intersection_total += len(intersection_list)
-        print(intersection_total, union_total)
         accuracy = (intersection_total/union_total)*100
         return accuracy
 
