@@ -8,6 +8,7 @@ import KNN as knn
 from KNN import *
 from utils_data import read_dataset, read_extended_dataset, crop_images, visualize_retrieval
 import matplotlib.pyplot as plt
+import time
 
 if __name__ == '__main__':
 
@@ -193,5 +194,69 @@ if __name__ == '__main__':
     ax.set_ylabel("Accuracy")
     ax.set_xlabel("k in KNN")
     ax.plot(range(3,20), knnLabelsList, color="tab:purple", marker='o')
+    plt.show()
+    """
+    
+    
+    
+    
+    
+    # QUANTITATIVE ANALYSIS TESTS
+
+    # Generate KNN Plots for first tests
+    """
+    train_imgs = train_imgs.reshape(train_imgs.shape[0], train_imgs.shape[1], train_imgs.shape[2] * train_imgs.shape[3])
+    imgsknn = test_imgs.reshape(test_imgs.shape[0], test_imgs.shape[1], test_imgs.shape[2] * test_imgs.shape[3])
+    knn = KNN(train_imgs, train_class_labels)
+    knnLabelsList = []
+    # time_list = []
+
+    for i in range(1,21):
+        print(i)
+        # start = time.time()
+
+        knnLabels = (knn.predict(imgsknn, i))
+
+        # end = time.time()
+        # predicted_time = end - start
+        # time_list.append(predicted_time)
+
+        knnLabelsList.append(Get_shape_accuracy(knnLabels,test_class_labels))
+    
+    fig, ax = plt.subplots()
+    ax.set_title("Accuracy of KNN")
+    ax.set_ylabel("Accuracy (%)")
+    ax.set_xlabel("k in KNN")
+    ax.plot(range(1,21), knnLabelsList, color="tab:purple", marker='o')
+    plt.show()
+    """
+
+    # Generate KMeans Plots for first tests
+    """
+    kmeansLabelsList = []
+    kmeansLabelsPlot = []
+    # time_list = []
+
+    for k_value in range(2,10):
+        print(k_value)
+        # start = time.time()
+
+        for img in test_imgs:
+            km = KMeans(img, k_value)
+            km.fit()
+            kmeansLabelsList.append(get_colors(km.centroids))
+        
+        # end = time.time()
+        # predicted_time = end - start
+        # time_list.append(predicted_time)
+
+        kmeansLabelsPlot.append(Get_color_accuracy(kmeansLabelsList, test_color_labels))
+        kmeansLabelsList.clear()
+
+    fig, ax = plt.subplots()
+    ax.set_title("Accuracy of Kmeans")
+    ax.set_ylabel("Accuracy (%)")
+    ax.set_xlabel("K in Kmeans")
+    ax.plot(range(2,10), kmeansLabelsPlot, color="tab:purple", marker='o')
     plt.show()
     """
