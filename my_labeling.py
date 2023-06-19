@@ -147,14 +147,6 @@ if __name__ == '__main__':
 
     Retrieval_combined(imgs, kmeansLabelsList, knnLabelsList, "red", "haNdbags", class_labels, color_labels)
     
-    
-    
-    
-    
-    
-    
-    
-    
     """
     # Generate KMeans plots
 
@@ -196,10 +188,6 @@ if __name__ == '__main__':
     ax.plot(range(3,20), knnLabelsList, color="tab:purple", marker='o')
     plt.show()
     """
-    
-    
-    
-    
     
     # QUANTITATIVE ANALYSIS TESTS
 
